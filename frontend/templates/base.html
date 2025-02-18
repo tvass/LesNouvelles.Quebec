@@ -1,0 +1,176 @@
+{% from 'bootstrap5/nav.html' import render_nav_item %}
+{% from 'bootstrap5/utils.html' import render_messages %}
+{% from 'bootstrap5/utils.html' import render_icon %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Les Nouvelles du Québec</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest') }}">
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Noto+Sans+Display:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    {{ bootstrap.load_css() }}
+    <style>
+        html {
+            overflow-y: overlay;
+        }
+
+        body {
+            font-family: "Noto Sans Display", serif;
+            font-optical-sizing: auto;
+            font-weight: 400;
+            font-style: normal;
+            font-variation-settings: "wdth" 100;
+        }
+
+        pre {
+            background: #ddd;
+            padding: 10px;
+        }
+
+        h2 {
+            margin-top: 20px;
+        }
+
+        footer {
+            margin: 20px;
+        }
+
+        .red {
+            color: rgba(255, 0, 0, 0.671);
+        }
+
+        .red:hover {
+            color: rgb(255, 0, 0);
+        }
+
+        .date {
+            font-size: 0.8em;
+        }
+
+        button.btn {
+            font-family: "JetBrains Mono", serif;
+            font-optical-sizing: auto;
+            font-weight: 400;
+            font-style: normal;
+            color: #ffffff;
+        }
+
+        button.btn:hover {
+            filter: brightness(1.2);
+        }
+
+        {% for cat, details in valid_categories.items() %}
+        .btn-{{ cat }} {
+            background-color: {{ details.color }};
+        }
+        {% endfor %}
+
+        .btn_selected {
+            border-bottom: 4px solid #02374a;
+        }
+
+        .mono,
+        .badge-custom-font,
+        .alert-custom-font {
+            font-family: "JetBrains Mono", serif;
+            font-optical-sizing: auto;
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        .list-group-item {
+            border: none;
+            border-top: 1px solid #dee2e6;
+        }
+
+        li.list-group-item a {
+            display: block;
+            cursor: pointer;
+        }
+
+        .icon-black {
+            color: black !important;
+        }
+
+        .pagination a {
+            color: #2726269d !important;
+        }
+
+        .pagination a:hover,
+        .pagination a:focus {
+            color: black !important;
+            background-color: #f0f0f0;
+        }
+
+        .pagination .active a {
+            color: white !important;
+            background-color: #000000b6 !important;
+            border-color: black !important;
+        }
+
+        .pagination .disabled a {
+            color: #888 !important;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light border-top sticky-top">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse  p-2" id="navbarSupportedContent">
+            <div class="btn-group mx-auto flex-wrap gap-2" role="group" aria-label="Navigation">
+                <a href="/unes">
+                    <button type="button" class="btn btn-secondary btn-sm {% if 'unes' in selected_categories %} btn_selected {% endif %}">
+                        {{ render_icon('columns', 12) }} Les Unes
+                    </button>
+                </a>
+                <a href="/">
+                    <button type="button" class="btn btn-secondary btn-sm {% if not selected_categories %} btn_selected {% endif %}">
+                        {{ render_icon('list', 12) }} Toutes les catégories
+                    </button>
+                </a>
+                {% for cat, details in valid_categories.items() %}
+                <a href="/{{ cat }}">
+                    <button type="button" class="btn btn-{{ cat }} btn-sm {% if cat in selected_categories %} btn_selected {% endif %}">
+                        {{ details.name }}
+                    </button>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</nav>
+<br />
+<main class="container-fluid">
+        {{ render_messages() }}
+        <div class="container">
+        <h1 class="mono"><b>LesNouvelles.Quebec</b></h1>
+        <h6 class="mono">L'info sans algo!</h6>
+        <br />
+        {% block content %}{% endblock %}
+        </div>
+</main>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <ul class="nav mx-auto">
+            <li class="nav-item"><a class="nav-link icon-black mono" href="/a-propos/">{{ render_icon('info-circle', 24) }} À Propos</a></li>
+            <li class="nav-item"><a class="nav-link icon-black mono" href="https://github.com/tvass/LesNouvelles.Quebec" target="_blank">{{ render_icon('github', 24) }} Contribuer</a></li>
+        </ul>
+    </div>
+</nav>
+{{ bootstrap.load_js() }}
+</body>
+</html>

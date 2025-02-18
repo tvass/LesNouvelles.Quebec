@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% from 'bootstrap5/utils.html' import render_icon %}
+
+{% block content %}
+<div class="accordion" id="accordionExample">
+{% for detail in data %}
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="heading{{ detail }}">
+        <button class="accordion-button mono" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ detail }}" aria-expanded="true" aria-controls="collapse{{ detail }}">
+            {{ detail }}
+        </button>
+      </h2>
+      <div id="collapse{{ detail }}" class="accordion-collapse collapse show" aria-labelledby="heading{{ detail }}" data-bs-parent="#accordionExample">
+        <div class="accordion-body mono">
+            {{ data[detail] }}
+        </div>
+      </div>
+    </div>
+{% endfor %}
+</div>
+
+
+{% endblock %}

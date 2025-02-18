@@ -1,0 +1,241 @@
+---
+sources:
+  - radiocanada:
+      url: https://ici.radio-canada.ca
+      about: https://cbc.radio-canada.ca/fr
+      title: Radio-Canada
+      description: Radio-Canada.ca | Information, radio, télé, sports, art
+      register: false
+      paywall: false
+      image:
+      frontpage:
+        - https://ici.radio-canada.ca/rss/4159
+      rss:
+        - url: https://ici.radio-canada.ca/rss/7239
+          category: alimentation
+        - url: https://ici.radio-canada.ca/rss/4163
+          category: art
+        - url: https://ici.radio-canada.ca/rss/5717
+          category: economie
+        - url: https://ici.radio-canada.ca/rss/92408
+          category: environnement
+        - url: https://ici.radio-canada.ca/rss/96
+          category: international
+        - url: https://ici.radio-canada.ca/rss/92411
+          category: justice
+        - url: https://ici.radio-canada.ca/rss/4175
+          category: politique
+        - url: https://ici.radio-canada.ca/rss/4171
+          category: sante
+        - url: https://ici.radio-canada.ca/rss/4165
+          category: science
+        - url: https://ici.radio-canada.ca/rss/7110
+          category: societe
+        - url: https://ici.radio-canada.ca/rss/4169
+          category: techno
+        - url: https://ici.radio-canada.ca/rss/1000057
+          category: sport
+        - url: https://ici.radio-canada.ca/rss/771
+          category: sport
+        - url: https://ici.radio-canada.ca/rss/1000056
+          category: sport
+        - url: https://ici.radio-canada.ca/rss/64852
+          category: sport
+        - url: https://ici.radio-canada.ca/rss/1000058
+          category: sport
+        - url: https://ici.radio-canada.ca/rss/555082
+          category: sport
+        - url: https://ici.radio-canada.ca/rss/1000059
+          category: sport
+        - url: https://ici.radio-canada.ca/rss/4167
+          category: art
+        - url: https://ici.radio-canada.ca/rss/1000232
+          category: art
+        - url: https://ici.radio-canada.ca/rss/1000229
+          category: art
+        - url: https://ici.radio-canada.ca/rss/1000231
+          category: art
+        - url: https://ici.radio-canada.ca/rss/1000083
+          category: art
+        - url: https://ici.radio-canada.ca/rss/1000230
+          category: art
+        - url: https://ici.radio-canada.ca/rss/1000233
+          category: art
+        # A REVOIR
+        - url: https://ici.radio-canada.ca/rss/4159
+          category: nouvelle
+        - url: https://ici.radio-canada.ca/rss/1000524
+          category: nouvelle
+      domains:
+        - cbc.ca
+        - radio-canada.ca
+  - ledevoir:
+      url: https://www.ledevoir.com
+      about: https://www.ledevoir.com/le-devoir/le-devoir
+      title: Le Devoir
+      description: Le Devoir | Nouvelles, politique, économie, culture et chroniques
+      register: true
+      paywall: true
+      image: https://www.ledevoir.com/assets/img/logo.svg
+      frontpage:
+        - https://www.ledevoir.com/rss/manchettes.xml
+      rss:
+        - url: https://www.ledevoir.com/rss/section/opinion.xml?id=1500
+          category: opinion
+        - url: https://www.ledevoir.com/rss/section/politique.xml?id=51
+          category: politique
+        - url: https://www.ledevoir.com/rss/section/environnement.xml?id=78
+          category: environnement
+        - url: https://www.ledevoir.com/rss/section/societe/consommation.xml
+          category: societe
+        - url: https://www.ledevoir.com/rss/section/societe/education.xml
+          category: education
+        - url: https://www.ledevoir.com/rss/section/societe/justice.xml
+          category: justice
+        - url: https://www.ledevoir.com/rss/section/economie.xml?id=49
+          category: economie
+        - url: https://www.ledevoir.com/rss/section/societe/le-devoir-de.xml
+          category: societe
+        - url: https://www.ledevoir.com/rss/section/societe/sante.xml
+          category: sante
+        - url: https://www.ledevoir.com/rss/section/societe/science.xml
+          category: science
+        - url: https://www.ledevoir.com/rss/section/societe/transports-urbanisme.xml
+          category: transport
+        - url: https://www.ledevoir.com/rss/section/monde.xml?id=76
+          category: international
+        - url: https://www.ledevoir.com/rss/section/culture.xml?id=48
+          category: art
+        - url: https://www.ledevoir.com/rss/section/lire.xml?id=1513
+          category: art
+        - url: https://www.ledevoir.com/rss/section/plaisirs.xml?id=50
+          category: alimentation
+        - url: https://www.ledevoir.com/rss/section/sports.xml?id=85
+          category: sport
+        - url: https://www.ledevoir.com/rss/section/videos.xml?id=1515
+          category: autre
+        - url: https://www.ledevoir.com/rss/section/les-as-de-l-info.xml?id=200
+          category: autre
+      domains:
+        - ledevoir.com
+  - lapresse:
+      url: https://www.lapresse.ca
+      about: https://info.lapresse.ca/
+      title: La Presse
+      description: LaPresse.ca | Actualités et Infos au Québec et dans le monde
+      register: true
+      paywall: false
+      image: https://www.lapresse.ca/assets/img/logo.svg
+      frontpage:
+        - http://www.lapresse.ca/manchettes/rss
+      rss:
+        - url: https://www.lapresse.ca/affaires/techno/rss
+          category: techno
+        - url: https://www.lapresse.ca/affaires/rss
+          category: economie
+        - url: https://www.lapresse.ca/sports/rss
+          category: sport
+        - url: https://www.lapresse.ca/auto/rss
+          category: transport
+        - url: https://www.lapresse.ca/arts/rss
+          category: art
+        - url: https://www.lapresse.ca/cinema/rss
+          category: art
+        - url: https://www.lapresse.ca/societe/rss
+          category: societe
+        - url: https://www.lapresse.ca/gourmand/rss
+          category: alimentation
+        - url: https://www.lapresse.ca/voyage/rss
+          category: art
+        - url: https://www.lapresse.ca/maison/rss
+          category: autre
+        - url: http://www.lapresse.ca/actualites/justice-et-faits-divers/rss
+          category: justice
+        - url: https://www.lapresse.ca/dialogue/rss
+          category: opinion
+        - url: https://www.lapresse.ca/contexte/rss
+          category: autre
+        - url: https://www.lapresse.ca/actualites/chroniques/rss
+          category: opinion
+        - url: https://www.lapresse.ca/actualites/editoriaux/rss
+          category: opinion
+        - url: https://www.lapresse.ca/actualites/caricatures/rss
+          category: autre
+        - url: https://www.lapresse.ca/actualites/politique/rss
+          category: politique
+        - url: https://www.lapresse.ca/actualites/justice-et-faits-divers/rss
+          category: justice
+        - url: https://www.lapresse.ca/actualites/sante/rss
+          category: sante
+        - url: https://www.lapresse.ca/actualites/education/rss
+          category: education
+        - url: https://www.lapresse.ca/actualites/environnement/rss
+          category: environnement
+        - url: https://www.lapresse.ca/actualites/sciences/rss
+          category: science
+        # A REVOIR
+        - url: http://www.lapresse.ca/manchettes/rss
+          category: nouvelle
+        - url: https://www.lapresse.ca/actualites/analyses/rss
+          category: autre
+        - url: https://www.lapresse.ca/actualites/national/rss
+          category: nouvelle
+      domains:
+        - lapresse.ca
+        - lp.ca
+  - jdm: #A FINIR
+      url: http://www.journaldemontreal.com
+      about: https://www.journaldemontreal.com/a-propos
+      title: Le Journal de Montréal
+      description: Le Journal de Montréal | Actualités, nouvelles et chroniques
+      register: false
+      paywall: false
+      image:
+      rss:
+        - url: http://www.journaldemontreal.com/sports/rss.xml
+          category: sport
+        - url: http://www.journaldemontreal.com/argent/rss.xml
+          category: economie
+        - url: http://www.journaldemontreal.com/spectacles/rss.xml
+          category: art
+        - url: http://www.journaldemontreal.com/voyages/rss.xml
+          category: art
+        - url: http://www.journaldemontreal.com/auto/rss.xml
+          category: transport
+      domains:
+        - journaldemontreal.com
+  - noovo:
+      url: https://www.noovo.info
+      about: https://www.noovo.ca/a-propos
+      title: Noovo
+      description: Noovo Info
+      register: false
+      paywall: false
+      image:
+      rss:
+        - url: https://www.noovo.info/bin/noovoinfo/rss.theme.xml?theme=art-et-culture
+          category: art
+        - url: https://www.noovo.info/bin/noovoinfo/rss.theme.xml?theme=affaires
+          category: economie
+        - url: https://www.noovo.info/bin/noovoinfo/rss.theme.xml?theme=politique
+          category: politique
+        - url: https://www.noovo.info/bin/noovoinfo/rss.theme.xml?theme=justice
+          category: justice
+        - url: https://www.noovo.info/bin/noovoinfo/rss.theme.xml?theme=science-et-nature
+          category: science
+        - url: https://www.noovo.info/bin/noovoinfo/rss.theme.xml?theme=technologie
+          category: techno
+        - url: https://www.noovo.info/bin/noovoinfo/rss.theme.xml?theme=environnement
+          category: environnement
+        - url: https://www.noovo.info/bin/noovoinfo/rss.theme.xml?theme=sport
+          category: sport
+        - url: https://www.noovo.info/bin/noovoinfo/rss.theme.xml?theme=international
+          category: international
+        - url: https://www.noovo.info/bin/noovoinfo/rss.theme.xml?theme=patrouille
+          category: justice
+        - url: https://www.noovo.info/bin/noovoinfo/rss.theme.xml?theme=sante
+          category: sante
+        - url: https://www.noovo.info/bin/noovoinfo/rss.theme.xml?theme=societe
+          category: societe
+      domains:
+        - noovo.info

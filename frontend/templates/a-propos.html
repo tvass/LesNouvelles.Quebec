@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% from 'bootstrap5/utils.html' import render_icon %}
+
+{% block content %}
+<h2 class="mono">À propos</h2>
+<br />
+<div class="container mono">
+    L'information est essentielle. Elle est au cœur de notre compréhension du monde, de nos choix et de notre avenir.
+    Malheureusement, de nos jours, s'informer de manière simple est devenu un véritable défi cognitif, voire une tâche ardue.
+    <br /><br />
+    Pourquoi?
+    <br /><br />
+    Le flux d'information qui nous innonde est contrôlé par des algorithmes qui,
+    plutôt que de nous orienter simplement vers des contenus visant à mieux comprendre les enjeux actuels, privilégient les
+    interets des plateformes qui guident nos clics.
+    <br /><br />
+    Les GAFAM, ces géants numériques qui dominent notre accès à l'information, montrent les limites de leurs bonnes intentions.
+    Leur modèle repose sur un profilage constant menant sans alternative à la marchandisation de nos données personnelles.
+    Il est cependant possible d’agir différemment, de reprendre le contrôle et d’accéder à l’information de manière plus indépendante.
+    <br /><br />
+    L'ensemble de la presse québécoise est riche et offre une grande variété de points de vue, permettant à chacun de
+    comprendre les enjeux et de forger son propre opinion. Bien que chaque journal ait ses propres intérêts, en tant que lecteur,
+    je les perçois comme unis dans un front commun contre la désinformation. Cette diversité est  une chance inestimable, mais il est essentiel d'en
+    prendre soin et il est donc crucial d'en respecter le modèle de financement.
+    C’est pourquoi chaque article doit être consulté sur la plateforme qui l'a produit, sans détour.
+    <br /><br />
+    Il est difficile de représenter l'ensemble de la presse sans tri, sans sélection, donc sans risque de sur-représenter
+    certains points de vue. Cela ne signifie pas pour autant que nous devons céder à un système qui manipule la visibilité
+    des contenus. Au contraire, je pense qu'il est possible de faire un usage transparent, raisonné et documenté de la technologie.
+    <br /><br />
+    La neutralité d'un flux d'information peut être pratiquement garantie par des formules mathématiques et un libre accès aux données structurant
+    la plateforme. Grâce à ces conditions de transparence, un contrôle continu permet de détecter et de corriger rapidement tout déséquilibre.
+    <br /><br />
+    <h2 class="mono">Fonctionnement actuel</h2>
+    <br />
+    Actuellement, la base de données ne conserve que les liens des articles publiés au cours des ~48 dernières heures, avec une limite de 1000 entrées.
+    L'objectif étant de rediriger vers le site d'origine plutôt que d'archiver les contenus, ces paramètres assurent un bon équilibre. Vous pouvez soumettre
+    des flux d'actualités directement via le <a href="https://github.com/tvass/LesNouvelles.Quebec/blob/main/backend/source.yaml">code source</a>.
+    <br /><br />
+    <h2 class="mono">Futur ?</h2>
+    <br />
+    Pour le moment, le site n'utilise pas de modèles d'intelligence artificielle. Néanmoins, l'utilisation de "prompts" –
+    des questions en langage naturel permettant de classifier et organiser l'information – pourrait s'avérer intéressante.
+    Tout comme les données et le code source, les interactions avec les modèles d'intelligence artificielle seraient alors
+    accessibles à tous.
+    <br /><br />
+    Bien que je m'efforce de proposer des réglages par défaut que je considère comme justes et équilibrés, il est essentiel
+    que chacun puisse les personnaliser, les remettre en question et les comparer. En somme, avoir le contrôle sur
+    son propre algorithme. S'inspirant du modèle du logiciel libre, la mise en place d'un système de contribution avec des
+    revues représente la prochaine étape clé dans l'évolution de notre plateforme.
+    <br /><br />
+    Bonne lecture ☕ !<br /><br />
+    <small><u>Contact:</u> tv@ipmotion.ca</small>
+  </div>
+{{ chart_script | safe }}
+
+
+{% endblock %}
