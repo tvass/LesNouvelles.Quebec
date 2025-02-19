@@ -82,7 +82,27 @@ sources:
       rss:
         - url: https://www.ledevoir.com/rss/section/opinion.xml?id=1500
           category: opinion
+        - url: https://www.ledevoir.com/rss/section/opinion/chroniques.xml
+          category: opinion
+        - url: https://www.ledevoir.com/rss/section/opinion/editoriaux.xml
+          category: opinion
+        - url: https://www.ledevoir.com/rss/section/opinion/idees.xml
+          category: opinion
+        - url: https://www.ledevoir.com/rss/section/opinion/libre-opinion.xml
+          category: opinion
+        - url: https://www.ledevoir.com/rss/section/opinion/lettres.xml
+          category: opinion
         - url: https://www.ledevoir.com/rss/section/politique.xml?id=51
+          category: politique
+        - url: https://www.ledevoir.com/rss/section/politique/canada.xml
+          category: politique
+        - url: https://www.ledevoir.com/rss/section/politique/quebec.xml
+          category: politique
+        - url: https://www.ledevoir.com/rss/section/politique/montreal.xml
+          category: politique
+        - url: https://www.ledevoir.com/rss/section/politique/ville-de-quebec.xml
+          category: politique
+        - url: https://www.ledevoir.com/rss/section/politique/regions.xml
           category: politique
         - url: https://www.ledevoir.com/rss/section/environnement.xml?id=78
           category: environnement
@@ -103,6 +123,18 @@ sources:
         - url: https://www.ledevoir.com/rss/section/societe/transports-urbanisme.xml
           category: transport
         - url: https://www.ledevoir.com/rss/section/monde.xml?id=76
+          category: international
+        - url: https://www.ledevoir.com/rss/section/monde/etats-unis.xml
+          category: international
+        - url: https://www.ledevoir.com/rss/section/monde/europe.xml
+          category: international
+        - url: https://www.ledevoir.com/rss/section/monde/afrique.xml
+          category: international
+        - url: https://www.ledevoir.com/rss/section/monde/asie.xml
+          category: international
+        - url: https://www.ledevoir.com/rss/section/monde/moyen-orient.xml
+          category: international
+        - url: https://www.ledevoir.com/rss/section/monde/ameriques.xml
           category: international
         - url: https://www.ledevoir.com/rss/section/culture.xml?id=48
           category: art
