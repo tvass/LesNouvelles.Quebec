@@ -3,13 +3,11 @@
 
 {% block content %}
 
-{% if selected_categories %}
+{% if selected_category %}
 <div class="w-100 mono p-1 m-1">
-    {% for cat in selected_categories %}
-        {% set category = valid_categories.get(cat, {'name': cat, 'color': '#000'}) %}
-        <span style="color: {{ category.color }};"><b>{{ category.name }}</b></span>
-        <a href="/" class="text-decoration-none text-dark w-100">{{ render_icon('x-square', 12) }}</a>
-    {% endfor %}
+    {% set category = valid_categories.get(selected_category, {'name': selected_category, 'color': '#000'}) %}
+    <span style="color: {{ category.color }};"><b>{{ category.name }}</b></span>
+    <a href="/" class="text-decoration-none text-dark w-100">{{ render_icon('x-square', 12) }}</a>
 </div>
 {% else %}
 <div class="w-100 mono p-1 m-1">
@@ -35,29 +33,29 @@
 </ol>
 <br />
 <nav aria-label="Pagination">
-  <ul class="pagination mono pagination-sm">
-      {% if pagination.has_prev %}
-          <li class="page-item">
-              <a class="page-link" href="{{ url_for('index', page=pagination.prev_num, categories=','.join(selected_categories)) }}">Précédent</a>
-          </li>
-      {% endif %}
+    <ul class="pagination mono pagination-sm">
+        {% if pagination.has_prev %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('index', page=pagination.prev_num, categorie=selected_category) }}">Précédent</a>
+            </li>
+        {% endif %}
 
-      {% for num in pagination.iter_pages() %}
-          {% if num %}
-              <li class="page-item {% if num == pagination.page %}active{% endif %}">
-                  <a class="page-link" href="{{ url_for('index', page=num, categories=','.join(selected_categories)) }}">{{ num }}</a>
-              </li>
-          {% else %}
-              <li class="page-item disabled"><span class="page-link">...</span></li>
-          {% endif %}
-      {% endfor %}
+        {% for num in pagination.iter_pages() %}
+            {% if num %}
+                <li class="page-item {% if num == pagination.page %}active{% endif %}">
+                    <a class="page-link" href="{{ url_for('index', page=num, categorie=selected_category) }}">{{ num }}</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">...</span></li>
+            {% endif %}
+        {% endfor %}
 
-      {% if pagination.has_next %}
-          <li class="page-item">
-              <a class="page-link" href="{{ url_for('index', page=pagination.next_num, categories=','.join(selected_categories)) }}">Suivant</a>
-          </li>
-      {% endif %}
-  </ul>
-</nav>
+        {% if pagination.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('index', page=pagination.next_num, categorie=selected_category) }}">Suivant</a>
+            </li>
+        {% endif %}
+    </ul>
+  </nav>
 
 {% endblock %}

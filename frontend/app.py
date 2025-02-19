@@ -4,7 +4,7 @@ import pytz
 
 from datetime import datetime
 from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime
-from flask import Flask, render_template, request, flash, redirect, url_for
+from flask import Flask, render_template, request, flash, redirect, url_for, abort
 from flask_wtf import FlaskForm, CSRFProtect
 from flask_bootstrap import Bootstrap5, SwitchField
 from flask_sqlalchemy import SQLAlchemy
@@ -73,22 +73,14 @@ class RSSItem(db.Model):
 @app.route('/')
 @app.route('/<categorie>')
 def index(categorie=None):
-    selected_categories = request.args.get('categories', '')
-    if selected_categories:
-        selected_categories = selected_categories.split(',')
-    else:
-        selected_categories = []
-
-    if categorie and categorie not in selected_categories:
-        selected_categories.append(categorie)
+    if categorie and categorie not in valid_categories:
+        categorie=None
 
     page = request.args.get('page', 1, type=int)
 
     query = RSSItem.query
-
-    if selected_categories:
-        query = query.filter(RSSItem.categorie.in_(selected_categories))
-
+    if categorie:
+        query = query.filter(RSSItem.categorie.in_([categorie]))
     pagination = query.order_by(RSSItem.pubDate.desc()).paginate(page=page, per_page=ITEMS_PER_PAGE, error_out=False)
     rss_items = pagination.items
 
@@ -111,7 +103,7 @@ def index(categorie=None):
             'categorie': item.categorie
         })
 
-    return render_template('home.html', rss_items=rss_items, data=data, pagination=pagination, selected_categories=selected_categories, valid_categories=valid_categories)
+    return render_template('home.html', rss_items=rss_items, data=data, pagination=pagination, selected_category=categorie, valid_categories=valid_categories)
 
 @app.route('/detail/<uuid>')
 def detail(uuid=None):
