@@ -133,18 +133,18 @@
         <div class="collapse navbar-collapse  p-2" id="navbarSupportedContent">
             <div class="btn-group mx-auto flex-wrap gap-2" role="group" aria-label="Navigation">
                 <a href="/unes">
-                    <button type="button" class="btn btn-secondary btn-sm {% if 'unes' in selected_categories %} btn_selected {% endif %}">
+                    <button type="button" class="btn btn-secondary btn-sm {% if 'unes' == selected_category %} btn_selected {% endif %}">
                         {{ render_icon('columns', 12) }} Les Unes
                     </button>
                 </a>
                 <a href="/">
-                    <button type="button" class="btn btn-secondary btn-sm {% if not selected_categories %} btn_selected {% endif %}">
+                    <button type="button" class="btn btn-secondary btn-sm {% if not selected_category %} btn_selected {% endif %}">
                         {{ render_icon('list', 12) }} Toutes les catégories
                     </button>
                 </a>
                 {% for cat, details in valid_categories.items() %}
                 <a href="/{{ cat }}">
-                    <button type="button" class="btn btn-{{ cat }} btn-sm {% if cat in selected_categories %} btn_selected {% endif %}">
+                    <button type="button" class="btn btn-{{ cat }} btn-sm {% if cat == selected_category %} btn_selected {% endif %}">
                         {{ details.name }}
                     </button>
                 </a>

@@ -150,7 +150,7 @@ def unes():
             'categorie': item.categorie
         })
 
-    return render_template('unes.html',  rss_items=rss_items, data=data, selected_categories="unes", valid_categories=valid_categories)
+    return render_template('unes.html',  rss_items=rss_items, data=data, selected_category="unes", valid_categories=valid_categories)
 
 
 @app.route('/a-propos', strict_slashes=False)
