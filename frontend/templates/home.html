@@ -26,7 +26,7 @@
         <div>{{ article.description }}</div>
         <div class="mono"><small><u>Source:</u> {{ article.source }}</small></div>
       </div>
-      <span class="badge bg-secondary badge-custom-font d-none d-md-inline">{{ article.pubDate }}</span>
+      <a href="/detail/{{ article.uuid }}"><span class="badge bg-secondary badge-custom-font d-none d-md-inline">{{ article.pubDate }}</span></a>
   </li>
 </a>
 {% endfor %}

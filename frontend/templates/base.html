@@ -137,6 +137,11 @@
                         {{ render_icon('columns', 12) }} Les Unes
                     </button>
                 </a>
+                <a href="/prompt">
+                    <button type="button" class="btn btn-secondary btn-sm {% if 'prompt' == selected_category %} btn_selected {% endif %}">
+                        {{ render_icon('card-text', 12) }} Personnaliser le flux <span class="badge bg-danger">test</span>
+                    </button>
+                </a>
                 <a href="/">
                     <button type="button" class="btn btn-secondary btn-sm {% if not selected_category %} btn_selected {% endif %}">
                         {{ render_icon('list', 12) }} Toutes les catégories

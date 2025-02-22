@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% from 'bootstrap5/utils.html' import render_icon %}
+
+{% block content %}
+<div class="w-100 mono p-1 m-1">
+  <span style="color: #000;"><b>Personnalisez votre flux d'information!</b></span>
+</div>
+<div class="w-100 mono p-1 m-1">
+  Exprimer vos préférences de manière simple.<br />
+  Par exemple : « Je souhaite suivre les actualités de Montréal, en mettant l'accent sur la culture autochtone. »<br />
+  <br />
+  Vous pouvez préciser et combiner des <b>préférences</b> et/ou des <b>exclusions</b> concernant la région, le thème et le format.<br />
+  <br />
+</div>
+<form>
+  <div class="form-group row mono">
+    <div class="col-sm-10">
+      <textarea class="form-control mono" id="exampleFormControlTextarea1" rows="5"></textarea>
+      <br />
+      <button type="submit" class="btn btn-primary">C'est parti !</button>
+    </div>
+    <br />
+    Quelques exemples:
+    <br /><br />
+    « Montréal, Québec, international »<br />
+    « Culture, technologie, sport, environnement »<br />
+    « Résumés, analyses, interviews »<br />
+    « Rien sur Elon Musk, Pas de politique, sans actualités people. »<br />
+    « J'aime les reportages et les articles détaillés. »<br />
+    « J’aimerais suivre des articles sur l’IA, l’écologie, et les innovations. »
+    <br />
+    <br />
+    Aucune inscription n'est requise, il vous suffiXt de garder en favori le lien généré.<br />
+    <input class="form-control " type="text" placeholder="https://lesnouvelles.quebec/prompt/585430d5-327e-4cb9-9e7a-214c566dccde" readonly>
+  </div>
+</form>
+<br />
+{% endblock %}

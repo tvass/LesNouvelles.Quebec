@@ -1,6 +1,17 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
+"""
+Module Name: frontend/app.py
+Description: Web application utilizing Bootstrap for the frontend. Currently,
+it has read-only access to the database but will have need transition to using the
+backend API.
+"""
+
 import os
 import pytz
+import numpy as np
+
 
 from datetime import datetime
 from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime
@@ -13,7 +24,7 @@ from sqlalchemy.orm import declarative_base
 montreal_tz = pytz.timezone('America/Toronto')
 
 Base = declarative_base()
-db_path = os.path.join(os.getcwd(), '/db/news.db')
+db_path = os.path.join(os.getcwd(), '../db/news.db')
 if not os.path.exists(db_path):
     exit(f"Database file {db_path} not found.")
 
@@ -57,6 +68,10 @@ valid_categories = {
     'alimentation': {'name': 'Alimentation', 'color': '#f1c40f'},
     'opinion': {'name': 'Opinion', 'color': '#ea66dc'}
 }
+
+def calculate_similarity(a, b):
+    return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+
 
 class RSSItem(db.Model):
     __tablename__ = 'rss_items'
@@ -105,6 +120,14 @@ def index(categorie=None):
 
     return render_template('home.html', rss_items=rss_items, data=data, pagination=pagination, selected_category=categorie, valid_categories=valid_categories)
 
+
+@app.route('/prompt')
+@app.route('/<prompt>')
+def prompt(prompt=None):
+    #
+    return render_template('prompt.html',  selected_category="prompt", valid_categories=valid_categories)
+
+
 @app.route('/detail/<uuid>')
 def detail(uuid=None):
     query = RSSItem.query
@@ -123,7 +146,7 @@ def detail(uuid=None):
         'uuid': rss_item.uuid,
         'categorie': rss_item.categorie
     }
-    return render_template('detail.html', data=data)
+    return render_template('detail.html', data=data, valid_categories=valid_categories)
 
 
 @app.route('/unes')
@@ -158,4 +181,4 @@ def about():
     return render_template('a-propos.html', valid_categories=valid_categories)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=False)
+    app.run(host='0.0.0.0', port=5000, debug=True)
