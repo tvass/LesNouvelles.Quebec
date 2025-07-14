@@ -1,0 +1,53 @@
+{% for article in data %}
+<a href="{{ article.link }}" class="text-decoration-none text-dark w-100" target="_blank">
+    <div class="card mb-2 w-100 mono">
+        <div class="row g-0">
+            <div class="col-md-4">
+                {% if article.image %}<img src="{{ article.image }}" class="img-fluid rounded-start" alt="...">{% endif
+                %}
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <div class="d-inline-block btn-{{ article.categorie }}" style="width: 12px; height: 12px;">
+                        </div> {{ article.title }}
+                    </h5>
+                    <p class="card-text">
+                    <h6><span class="badge bg-secondary">{{article.pubDate}}</span></h6>
+                    </p>
+                    <p class="card-text"><b>{{ article.source }}</b></p>
+                    <p class="card-text">{{ article.description }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    <br />
+    <nav aria-label="Pagination">
+        <ul class="pagination mono pagination-sm">
+            {% if pagination.has_prev %}
+            <li class="page-item">
+                <a class="page-link"
+                    href="{{ url_for('index', page=pagination.prev_num, categorie=selected_category) }}">Précédent</a>
+            </li>
+            {% endif %}
+
+            {% for num in pagination.iter_pages() %}
+            {% if num %}
+            <li class="page-item {% if num == pagination.page %}active{% endif %}">
+                <a class="page-link" href="{{ url_for('index', page=num, categorie=selected_category) }}">{{ num }}</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><span class="page-link">...</span></li>
+            {% endif %}
+            {% endfor %}
+
+            {% if pagination.has_next %}
+            <li class="page-item">
+                <a class="page-link"
+                    href="{{ url_for('index', page=pagination.next_num, categorie=selected_category) }}">Suivant</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+</a>

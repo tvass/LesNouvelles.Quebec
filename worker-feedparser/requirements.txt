@@ -1,0 +1,11 @@
+certifi==2025.4.26
+charset-normalizer==3.4.1
+dotenv==0.9.9
+feedparser==6.0.11
+idna==3.10
+numpy==2.2.5
+python-dotenv==1.1.0
+PyYAML==6.0.2
+requests==2.32.3
+sgmllib3k==1.0.0
+urllib3==2.4.0

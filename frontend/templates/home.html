@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% from 'bootstrap5/utils.html' import render_icon %}
 
 {% block content %}
 
@@ -15,47 +14,16 @@
 </div>
 {% endif %}
 
-<ol class="list-group list-group">
-{% for article in data %}
-<a href="{{ article.link }}" class="text-decoration-none text-dark w-100" target="_blank">
-  <li class="list-group-item d-flex justify-content-between align-items-start p-1 gap-1">
-      <div class="ms-2 me-auto">
-        <div class="fw-bold mono"><div class="d-inline-block btn-{{ article.categorie }}" style="width: 12px; height: 12px;"></div>
-          {{ article.title }}
-        </div>
-        <div>{{ article.description }}</div>
-        <div class="mono"><small><u>Source:</u> {{ article.source }}</small></div>
-      </div>
-      <span class="badge bg-secondary badge-custom-font d-none d-md-inline">{{ article.pubDate }}</span>
-  </li>
-</a>
-{% endfor %}
-</ol>
-<br />
-<nav aria-label="Pagination">
-    <ul class="pagination mono pagination-sm">
-        {% if pagination.has_prev %}
-            <li class="page-item">
-                <a class="page-link" href="{{ url_for('index', page=pagination.prev_num, categorie=selected_category) }}">Précédent</a>
-            </li>
-        {% endif %}
 
-        {% for num in pagination.iter_pages() %}
-            {% if num %}
-                <li class="page-item {% if num == pagination.page %}active{% endif %}">
-                    <a class="page-link" href="{{ url_for('index', page=num, categorie=selected_category) }}">{{ num }}</a>
-                </li>
-            {% else %}
-                <li class="page-item disabled"><span class="page-link">...</span></li>
-            {% endif %}
-        {% endfor %}
+{% if prompt and data|length == 0 or data == [] %}
+<center>
+    <div class="mono m-1 p-3">Oups! La base de donnée est<br />actuellement vide.
+        <br /><br />
+        <img src="/static/empty.png">
+    </div>
+</center>
+{% endif %}
 
-        {% if pagination.has_next %}
-            <li class="page-item">
-                <a class="page-link" href="{{ url_for('index', page=pagination.next_num, categorie=selected_category) }}">Suivant</a>
-            </li>
-        {% endif %}
-    </ul>
-  </nav>
+{% include 'articles-loop.html' %}
 
 {% endblock %}
