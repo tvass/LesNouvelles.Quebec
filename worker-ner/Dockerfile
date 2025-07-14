@@ -2,6 +2,8 @@
 
 FROM python:3.12-slim
 
+RUN apt-get update && apt-get install -y libgl1 libglib2.0-0 && rm -rf /var/lib/apt/lists/*
+
 RUN useradd -m app \
     && mkdir -p /home/app/worker-ner /home/app/config /home/app/common \
     && chown -R app:app /home/app
@@ -18,4 +20,4 @@ COPY --chown=app:app common /home/app/common
 
 ENV PATH="/home/app/.local/bin:$PATH"
 
-CMD ["python", "app-using-cohere.py"]
+CMD ["python", "app.py"]

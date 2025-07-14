@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="w-100 mono p-1 m-1">
+    <b>Personnalisez votre flux d'information</b> <span class="badge bg-danger">test</span>
+</div>
+<div class="w-100 mono p-1 m-1">
+    <div class="alert alert-primary mono w-100" role="alert">
+    Votre configuration a été enregistrée avec succès.<br />
+    Elle sera automatiquement supprimée si elle n'est pas utilisée
+    pendant plus de 7 jours.<br />
+    </div>
+    <center>
+    <div class="mono m-1 p-3">Le fil d'actualités personnalisé<br />
+        sera disponible dans quelques minutes.
+        <br /><br />
+        <img src="/static/ok.png">
+    </div>
+    </center>
+    <div class="alert alert-danger mono w-100" role="alert">
+        <div class="p-1 m-1">
+        {{ render_icon('link','20') }} Pour modifier vos réglages ultérieurement, conservez le lien privé ci-dessous.
+        </div>
+        <div class="input-group mb-0">
+            <span class="input-group-text" id="basic-addon3">Lien privé</span>
+            <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3"
+                value="https://lesnouvelles.quebec/prompt/{{ response.uuid }}/{{ response.key }}" readonly>
+        </div>
+    </div>
+
+</div>
+<div class="p-1 m-1 text-center w-100 mono">
+    <a href="/prompt/{{ response.uuid }}" class="btn btn-secondary btn-lg active m-2" role="button" aria-pressed="true">Lire mes nouvelles</a>
+    <a href="/prompt/{{ response.uuid }}/{{ response.key }}" class="btn btn-secondary btn-lg active m-2" role="button" aria-pressed="true">Modifier mes réglages</a>
+</div>
+{% endblock %}

@@ -1,38 +1,169 @@
 {% extends 'base.html' %}
-{% from 'bootstrap5/utils.html' import render_icon %}
 
 {% block content %}
 <div class="w-100 mono p-1 m-1">
-  <span style="color: #000;"><b>Personnalisez votre flux d'information!</b></span>
+{% if uuid %}<b>Votre fils de nouvelles personnalisé</b>{% else %}<b>Personnalisez votre flux d'information</b>{% endif %} <span class="badge bg-danger">test</span>
 </div>
+{% if not key and not uuid %}
 <div class="w-100 mono p-1 m-1">
-  Exprimer vos préférences de manière simple.<br />
-  Par exemple : « Je souhaite suivre les actualités de Montréal, en mettant l'accent sur la culture autochtone. »<br />
-  <br />
-  Vous pouvez préciser et combiner des <b>préférences</b> et/ou des <b>exclusions</b> concernant la région, le thème et le format.<br />
-  <br />
-</div>
-<form>
-  <div class="form-group row mono">
-    <div class="col-sm-10">
-      <textarea class="form-control mono" id="exampleFormControlTextarea1" rows="5"></textarea>
-      <br />
-      <button type="submit" class="btn btn-primary">C'est parti !</button>
+  <div class="alert alert-primary p-2 m-1" role="alert">
+    <div class="p-2 m-1">
+      {{ render_icon('pencil-square','20') }} Créez vos réglages personnalisés en décrivant votre recherche dans le formulaire ci-dessous et en filtrant par catégories si nécessaire.
     </div>
-    <br />
-    Quelques exemples:
-    <br /><br />
-    « Montréal, Québec, international »<br />
-    « Culture, technologie, sport, environnement »<br />
-    « Résumés, analyses, interviews »<br />
-    « Rien sur Elon Musk, Pas de politique, sans actualités people. »<br />
-    « J'aime les reportages et les articles détaillés. »<br />
-    « J’aimerais suivre des articles sur l’IA, l’écologie, et les innovations. »
-    <br />
-    <br />
-    Aucune inscription n'est requise, il vous suffiXt de garder en favori le lien généré.<br />
-    <input class="form-control " type="text" placeholder="https://lesnouvelles.quebec/prompt/585430d5-327e-4cb9-9e7a-214c566dccde" readonly>
+    <form method="post" action="/post/create-prompt">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="p-0 m-1">
+        <textarea class="form-control mono w-100 p-1 m-1" id="prompt" name="prompt" rows="3" aria-label="With textarea"
+          placeholder="Ex: Les énergies renouvelables, l'environnement et les serres urbaines."></textarea>
+      </div>
+      <div class="accordion w-100 mono p-1 m-1" id="accordionPanelsStayOpenExample">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+              data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+              Filtre par Catégorie(s)
+            </button>
+          </h2>
+          <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse"
+            aria-labelledby="panelsStayOpen-headingTwo">
+            <div class="accordion-body">
+              {% for cat, details in valid_categories.items() %}
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="{{ cat }}" name="{{ cat }}" checked>
+                <label class="form-check-label" for="{{ cat }}">{{ details.name }}</label>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="accordion w-100 mono p-1 m-1 text-end">
+        <button type="submit" class="btn btn-sm btn-primary btn-primary">Enregistrer</button>
+      </div>
+    </form>
   </div>
-</form>
+</div>
+{% endif %}
+
+{% if not key and uuid %}
+<div class="w-100 mono p-1 m-1">
+  <div class="alert alert-warning p-2 m-1" role="alert">
+    <div class="p-2 m-1">
+      {{ render_icon('quote','20') }} {{ prompt.text }}
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% if key %}
+<div class="w-100 mono p-1 m-1">
+  <div class="alert alert-danger p-2 m-1" role="alert">
+    <div class="p-2 m-1">
+    {{ render_icon('unlock-fill','20') }} Lien privé détecté. La modification des réglages est autorisée et entraîne la reconstruction du fil.
+    </div>
+    <form method="post" action="/post/update-prompt">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="uuid" value="{{ prompt.uuid }}">
+      <input type="hidden" name="key" value="{{ prompt.key }}">
+      <div class="p-0 m-1">
+        <textarea class="form-control mono w-100 p-1 m-1" name="prompt" id="prompt" rows="3"
+          aria-label="With textarea" placeholder="Ex: Les énergies renouvelables, l'environnement et les serres urbaines.">{% if prompt %}{{ prompt.text }}{% endif %}</textarea>
+      </div>
+      <div class="accordion w-100 mono p-1 m-1" id="accordionPanelsStayOpenExample">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo "> Filtre par Catégorie(s)
+          </button>
+          </h2>
+          <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+            <div class="accordion-body">
+              {% for cat, details in valid_categories.items() %}
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"><label class="form-check-label" for="flexCheckDefault">{{ details.name }}</label>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="accordion w-100 mono p-1 m-1 text-end">
+        <button type="submit" class="btn btn-sm btn-primary btn-danger">Enregistrer</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endif %}
+
+{% if prompt and data|length == 0 %}
+<center>
+<div class="mono m-1 p-3">Le robot n'est pas encore passé<br />pour construire le fils d'actu!
+  <br /><br />
+  <img src="/static/wait.png">
+</div>
+</center>
+{% endif %}
+
+{% if data and data|length > 0 %}
+<div class="w-100 mono p-1 m-1">
+  {% include 'articles-loop.html' %}
+</div>
+{% endif %}
+
+{% if pagination %}
 <br />
+<div class="w-100 mono p-1 m-1">
+  <nav aria-label="Pagination">
+    <ul class="pagination mono pagination-sm">
+    {% if pagination.has_prev %}
+      <li class="page-item">
+        <a class="page-link"
+        href="/prompt/{{ uuid }}{% if key %}/{{ key }}{% endif %}?page={{ pagination.prev_num }}">Précédent</a>
+      </li>
+    {% endif %}
+
+    {% for num in pagination.iter_pages() %}
+      {% if num %}
+        <li class="page-item {% if num == pagination.page %}active{% endif %}">
+          <a class="page-link" href="/prompt/{{ uuid }}{% if key %}/{{ key }}{% endif %}?page={{ num }}">{{ num }}</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">...</span></li>
+      {% endif %}
+    {% endfor %}
+
+    {% if pagination.has_next %}
+      <li class="page-item">
+        <a class="page-link"
+          href="/prompt/{{ uuid }}{% if key %}/{{ key }}{% endif %}?page={{ pagination.next_num }}">Suivant</a>
+      </li>
+    {% endif %}
+    </ul>
+  </nav>
+</div>
+{% endif %}
+
+{% if key %}
+<div class="w-100 mono p-1 m-1">
+  <div class="alert alert-danger p-2 m-1" role="alert">
+    <div class="input-group mb-0">
+      <span class="input-group-text" id="basic-addon3">Lien privé</span>
+      <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3"
+        value="https://lesnouvelles.quebec/prompt/{{ prompt.uuid }}/{{ prompt.key }}" readonly>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% if uuid %}
+<div class="w-100 mono p-1 m-1">
+  <div class="alert alert-warning p-2 m-1" role="alert">
+    <div class="input-group mb-0">
+      <span class="input-group-text" id="basic-addon3">Lien public</span>
+      <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3"
+        value="https://lesnouvelles.quebec/prompt/{{ prompt.uuid }}" readonly>
+    </div>
+  </div>
+</div>
+{% endif %}
+
 {% endblock %}

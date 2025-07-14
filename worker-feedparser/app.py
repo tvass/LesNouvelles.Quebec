@@ -72,12 +72,12 @@ def insert_rss_feed(url, source_title, category):
             continue
 
         item = rss_item.RSSItemClient(
-            title = entry.get("title", "").strip(),
-            link = entry.get("link", "").strip(),
-            description = strip_html_tags(entry.get("description", "").strip()),
-            pubDate = pubDate.isoformat(),
-            source = source_title,
-            categorie = category
+            title=strip_html_tags(entry.get("title", "").strip()),
+            link=entry.get("link", "").strip(),
+            description=strip_html_tags(entry.get("description", "").strip()),
+            pubDate=pubDate.isoformat(),
+            source=source_title,
+            categorie=category,
         )
 
         try:

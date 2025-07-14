@@ -30,8 +30,16 @@ For the record, expected workflow:
 """
 
 
+import logging
 import sys
 import os
+import requests
+import time
+import json
+
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../common")))
 
@@ -39,4 +47,21 @@ import utils
 import rss_item
 import prompt
 
-# Main loop
+
+while True:
+    time.sleep(5)
+    try:
+        prompts = utils.fetch_all("prompts")
+        logging.info(f"📄 Get all: {prompts}")
+    except Exception as e:
+        logging.error(f"Error fetching prompts: {e}")
+        continue
+    for uuid in prompts:
+        time.sleep(5)
+        try:
+            my_prompt = prompt.PromptClient(uuid)
+            my_prompt.search()
+            my_prompt.update()
+        except Exception as e:
+            logging.error(f"Error fetching articles: {e}")
+        continue

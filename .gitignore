@@ -5,3 +5,9 @@ kubernetes/
 **/__pycache__/
 **/*.code-workspace
 .vscode
+**/terraform.tfstate.backup
+**/terraform.tfstate
+**/*tfstate*
+**/.terraform
+**/.terraform.lock.hcl
+**/.terraform*

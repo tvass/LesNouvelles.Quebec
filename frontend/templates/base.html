@@ -3,7 +3,7 @@
 {% from 'bootstrap5/utils.html' import render_icon %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr" data-bs-theme="light">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -122,6 +122,28 @@
         .pagination .disabled a {
             color: #888 !important;
         }
+        .accordion-item {
+            border: none;
+        }
+        .accordion-button {
+            border: 1px solid #ccc;
+        }
+        .accordion-button:focus {
+            box-shadow: 0px 0px 0px 0px;
+            outline: none;
+        }
+        .accordion-button:not(.collapsed) {
+            background-color: #f0f0f0; /* Removes the blue background */
+            color: inherit; /* Keeps text color unchanged */
+            border: 1px solid #ccc;
+        }
+        .small-text {
+            padding: 5px;
+            font-size: 0.6rem;
+        }
+        .content-with-padding {
+            padding-bottom: 70px; /* Adjust this value based on the height of your fixed-bottom navbar */
+        }
     </style>
 </head>
 <body>
@@ -162,20 +184,44 @@
 <main class="container-fluid">
         {{ render_messages() }}
         <div class="container">
-        <h1 class="mono"><b>LesNouvelles.Quebec</b></h1>
+        <h1 class="mono">🏴‍☠️ <b>LesNouvelles.Quebec</b></h1>
         <h6 class="mono">L'information sans algorithme!</h6>
         <br />
         {% block content %}{% endblock %}
         </div>
 </main>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<div class="content-with-padding mono text-center">&nbsp;</div>
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-bottom">
     <div class="container-fluid">
         <ul class="nav mx-auto">
             <li class="nav-item"><a class="nav-link icon-black mono" href="/a-propos/">{{ render_icon('info-circle', 24) }} À Propos</a></li>
             <li class="nav-item"><a class="nav-link icon-black mono" href="https://github.com/tvass/LesNouvelles.Quebec" target="_blank">{{ render_icon('github', 24) }} Contribuer</a></li>
+            <li class="nav-item">
+                <a id="theme-toggle" class="nav-link icon-black mono" href="#" onclick="toggleTheme(event)">
+                    {{ render_icon('toggles', 24) }} Thème
+                </a>
+            </li>
         </ul>
     </div>
 </nav>
 {{ bootstrap.load_js() }}
+<script>
+    const toggleButton = document.getElementById("theme-toggle");
+    const themeIcon = document.getElementById("theme-icon");
+    const htmlElement = document.documentElement;
+
+    function updateTheme(isDark) {
+        htmlElement.setAttribute("data-bs-theme", isDark ? "dark" : "light");
+        themeIcon.classList.toggle("bi-moon", !isDark);
+        themeIcon.classList.toggle("bi-sun", isDark);
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+    }
+
+    // Toggle Theme on Click
+    toggleButton.addEventListener("click", () => {
+        const isDark = htmlElement.getAttribute("data-bs-theme") !== "dark";
+        updateTheme(isDark);
+    });
+</script>
 </body>
 </html>

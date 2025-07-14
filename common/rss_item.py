@@ -3,18 +3,15 @@
 
 """
 Module Name: common/rss_item.py
-Description: RSSItemClient class for interacting with the RSS Item API.
+Description: RSSItemClient class for interacting with the RSS Item class
+and Backend API.
 """
 
 import json
 import requests
 import os
+import re
 from config import *
-import cohere as cohereV2
-import numpy as np
-from spacy_llm.models import cohere
-from spacy_llm.util import assemble
-
 
 class RSSItemClient:
 
@@ -25,27 +22,79 @@ class RSSItemClient:
         title=None,
         description=None,
         pubDate=None,
+        ogp=None,
+        image=None,
         source=None,
         categorie=None,
         frontpage_id=None,
         tags=None,
-        tags_embedding=None,
         embedding=None,
+        similar=None,
+        ner_count=None,
     ):
         self.uuid = uuid
         self.link = link
         self.title = title
         self.description = description
         self.pubDate = pubDate
+        self.ogp = ogp or []
+        self.image = image
         self.source = source
         self.categorie = categorie
         self.frontpage_id = frontpage_id
         self.tags = tags or []
-        self.tags_embedding = tags_embedding or []
         self.embedding = embedding or []
+        self.similar = similar or []
+        self.ner_count = ner_count or 0
 
         if uuid:
             self.get()
+
+    def __str__(self, sanitized=True):
+        """Convert the RSSItem to a string representation, optionally sanitizing the title and description."""
+        if sanitized:
+            sanitized_title = re.sub(r"[^A-Za-z0-9À-ÿ\s]", " ", self.title)
+            sanitized_description = re.sub(r"[^A-Za-z0-9À-ÿ\s]", " ", self.description)
+            return sanitized_title + " " + sanitized_description
+        else:
+            return self.title + " " + self.description
+
+
+    def to_dict(self):
+        """Convert the RSSItem to a dictionary format for API calls."""
+        return {
+            "uuid": self.uuid,
+            "link": self.link,
+            "title": self.title,
+            "description": self.description,
+            "pubDate": self.pubDate,
+            "ogp": self.ogp,
+            "image": self.image,
+            "source": self.source,
+            "categorie": self.categorie,
+            "frontpage_id": self.frontpage_id if self.frontpage_id is not None else 0,
+            "tags": self.tags,
+            "embedding": self.embedding,
+            "similar": self.similar,
+            "ner_count": self.ner_count,
+        }
+
+    def from_dict(self, data):
+        """Populate the RSSItem object from a dictionary (e.g., API response)."""
+        self.uuid = data.get("uuid")
+        self.link = data.get("link")
+        self.title = data.get("title")
+        self.description = data.get("description")
+        self.pubDate = data.get("pubDate")
+        self.ogp = data.get("ogp")
+        self.image = data.get("image")
+        self.source = data.get("source")
+        self.categorie = data.get("categorie")
+        self.frontpage_id = data.get("frontpage_id", 0)
+        self.tags = data.get("tags", [])
+        self.embedding = data.get("embedding", [])
+        self.similar = data.get("similar", [])
+        self.ner_count = data.get("ner_count", 0)
 
     def create(self):
         """Create a new RSSItem via the API (POST)."""
@@ -79,73 +128,3 @@ class RSSItemClient:
             print("RSS Item retrieved successfully.")
         else:
             print(f"Failed to get RSS Item: {response.text}")
-
-    def to_dict(self):
-        """Convert the RSSItem to a dictionary format for API calls."""
-        return {
-            "uuid": self.uuid,
-            "link": self.link,
-            "title": self.title,
-            "description": self.description,
-            "pubDate": self.pubDate,
-            "source": self.source,
-            "categorie": self.categorie,
-            "frontpage_id": self.frontpage_id if self.frontpage_id is not None else 0,
-            "tags": self.tags,
-            "tags_embedding": self.tags_embedding,
-            "embedding": self.embedding,
-        }
-
-    def from_dict(self, data):
-        """Populate the RSSItem object from a dictionary (e.g., API response)."""
-        self.uuid = data.get("uuid")
-        self.link = data.get("link")
-        self.title = data.get("title")
-        self.description = data.get("description")
-        self.pubDate = data.get("pubDate")
-        self.source = data.get("source")
-        self.categorie = data.get("categorie")
-        self.frontpage_id = data.get("frontpage_id", 0)
-        self.tags = data.get("tags", [])
-        self.tags_embedding = data.get("tags_embedding", [])
-        self.embedding = data.get("embedding", [])
-
-    def to_string(self):
-        """Convert the RSSItem to a string representation."""
-        return self.title + " " + self.description
-
-    def get_ner(self):
-        """Get the NER for the given text using spacy-llm (configured to use Cohere API."""
-        nlp = assemble(LNQ_CONFIG_PATH + "config.ner")
-        doc = nlp(self.to_string())
-        ner = {
-            "entities": [{"label": ent.label_, "text": ent.text} for ent in doc.ents]
-        }
-        self.tags = ner["entities"]
-
-    def get_embedding(self):
-        """Get the embedding for the given text using Cohere API, including metadata."""
-        co = cohereV2.Client(api_key=CO_API_KEY)
-        metadata = str(
-            f"Source: {self.source}, Categorie: {self.categorie}, Tags: {json.dumps(self.tags)}"
-        )
-        emb = co.embed(
-            texts=[str(self.title), str(self.description), str(metadata)],
-            model="embed-multilingual-v3.0",
-            input_type="search_document",
-            embedding_types=["float"],
-        )
-        self.embedding = emb.embeddings.float[0]
-
-    def get_tags_embedding(self):
-        """Get the embedding for the tags using Cohere API."""
-        if not self.tags:
-            raise ValueError("Tags are required to get the tags embedding.")
-        co = cohereV2.Client(api_key=CO_API_KEY)
-        emb = co.embed(
-            texts=[str(self.tags)],
-            model="embed-multilingual-v3.0",
-            input_type="search_query",
-            embedding_types=["float"],
-        )
-        self.tags_embedding = emb.embeddings.float[0]

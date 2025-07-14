@@ -6,9 +6,9 @@
 Module Name: backend/app.py
 Description: This module serves as the backend, hosting the API server.
 It handles incoming requests for adding articles and prompts to the
-database. The garbage collector for deleting articles >1000 is not
-implemented yet. It should be triggered randomly during POST requests
-when adding new articles. Same for prompts based on last usage info.
+database.
+
+TODO: "The garbage collector for deleting articles >1000 is not implemented yet It should be triggered randomly during POST requests when adding new articles. Same for prompts based on last usage info.
 """
 
 import os
@@ -66,17 +66,22 @@ app = FastAPI()
 # This will serve as the default schema when creating items via the API
 class PromptCreate(BaseModel):
     text: str
-    tags: Optional[List] = []
-    embedding: Optional[List] = []
+    settings: Optional[list] = []
 
 
 class PromptResponse(PromptCreate):
     uuid: str
-    key: str
-    created_at: datetime
-
-    class Config:
-        from_attributes = True
+    text: str
+    text_improved: Optional[str]
+    key:  Optional[str]
+    tags:  Optional[list]
+    created_at: Optional[datetime]
+    lastused_at: Optional[datetime]
+    embedding: Optional[list]
+    feed: Optional[list]
+    settings: Optional[list]
+    ner_count: Optional[int]
+    enable: Optional[bool]
 
 
 # RSSItem Pydantic models
@@ -85,18 +90,15 @@ class RSSItemCreate(BaseModel):
     title: str
     description: Optional[str] = None
     pubDate: Optional[datetime] = None
+    ogp:  Optional[list] = None
     source: str
     categorie: str
     frontpage_id: int = 0
-    tags: Optional[List] = []
-    embedding: Optional[List] = []
 
 
 class RSSItemResponse(RSSItemCreate):
     uuid: str
-
-    class Config:
-        from_attributes = True
+    ner_count: int
 
 
 # Dependency to get the database session
@@ -115,24 +117,24 @@ def get_all(type: str, db: Session = Depends(get_db)):
         items = (
             db.query(RSSItem)
             .filter(
-                and_(
+                or_(
                     RSSItem.tags != "[]",
                     RSSItem.embedding != "[]",
                 )
             )
-            .order_by(RSSItem.pubDate.asc())
+            .order_by(RSSItem.pubDate.asc()) #return older first
             .all()
         )
     elif type == "prompts":
         items = (
             db.query(Prompt)
             .filter(
-                and_(
+                or_(
                     Prompt.tags != "[]",
                     Prompt.embedding != "[]",
                 )
             )
-            .order_by(Prompt.created_at.asc())
+            .order_by(Prompt.created_at.desc())  #return recent first
             .all()
         )
     else:
@@ -144,56 +146,49 @@ def get_all(type: str, db: Session = Depends(get_db)):
     return uuids
 
 
-# Returns articles that are similar to a given {prompt} or {articles} uuid
-# Endpoint for testing only as it will done in the background (worker-feedmaker)
-@app.get("/vector/{type}/{uuid}")
-@app.get("/vector/{type}/{uuid}/{limit}")
-def get_vector(type: str, uuid: str, limit: int = 3, db: Session = Depends(get_db)):
-    model = RSSItem if type == "articles" else Prompt if type == "prompts" else None
-    if not model:
-        raise HTTPException(status_code=400, detail="Invalid type")
+@app.get("/search/{uuid}")
+def search(uuid: str, db: Session = Depends(get_db)):
+    """
+    Search articles that match a prompt.
+    Args:
+        uuid of a Prompt
 
+    Returns:
+        Return the list of articles.
+    """
     db_item = (
-        db.query(model)
+        db.query(Prompt)
         .filter(
-            model.uuid == uuid,
-            model.tags_embedding != [],
-            model.embedding != [],
+            Prompt.uuid == uuid,
+            Prompt.embedding != [],
         )
         .first()
     )
     if db_item is None:
-        raise HTTPException(status_code=404, detail="Article not found")
-    items = db.query(RSSItem).filter(RSSItem.uuid != uuid).all()
+        raise HTTPException(status_code=404, detail="Prompt not found")
+
+    #TO DO: Ajouter filtre sur setttings
+    items = db.query(RSSItem).filter(RSSItem.embedding != "[]").order_by(RSSItem.pubDate.desc()).all()
     result = []
+    score_1 = 0
+    score_2 = 0
     for item in items:
+        logging.info(f"Search score for article: {item.uuid}")
         if item.embedding and item.embedding != "[]":
-            logging.info(f"Article: {item.title} {item.uuid}")
+            score_1 = utils.calculate_similarity(item.embedding, db_item.embedding)
 
-            # Calculate score
-            score_1 = utils.calculate_similarity(
-                item.tags_embedding, db_item.tags_embedding
-            )
-            score_2 = utils.calculate_similarity(item.embedding, db_item.embedding)
+        if item.tags and item.tags != "[]" and db_item.tags and db_item.tags != "[]":
+            score_2 = utils.calculate_ner(item.tags, db_item.tags)
 
-            score_3 = utils.calculate_ner(item.tags, db_item.tags)
-
-            total = score_1 + score_2 + score_3
-            logging.info(f"Total: {score_1}, {score_2}, {score_3}: {total}")
+        total = score_1 + score_2
+        if total > 0.9:
             result.append(
-                (
-                    item.title,
-                    item.uuid,
-                    item.source,
-                    f"score_1: {score_1}",
-                    f"score_2: {score_2}",
-                    f"score_3: {score_3}",
-                    total,
-                )
+                {
+                    "uuid": item.uuid,
+                    "score": total
+                }
             )
-
-    result = sorted(result, key=lambda x: x[6], reverse=True)
-    return result[:limit]
+    return result
 
 
 @app.get("/ner/{type}")
@@ -202,8 +197,16 @@ def get_items_for_ner(type: str, db: Session = Depends(get_db)):
         items = (
             db.query(RSSItem)
             .filter(
-                or_(
-                    RSSItem.tags == "[]",
+                and_(
+                    or_(
+                        RSSItem.tags == "[]",
+                        RSSItem.embedding == "[]",
+                        RSSItem.ogp == "",
+                        RSSItem.ogp == "[]",
+                        RSSItem.ogp == '[{"title": "", "basic": [], "open_graph": [], "twitter": [], "other": []}]',
+                    ),
+                    # Max retry per item is 3
+                    RSSItem.ner_count <= 3,
                 )
             )
             .order_by(RSSItem.pubDate.asc())
@@ -213,7 +216,16 @@ def get_items_for_ner(type: str, db: Session = Depends(get_db)):
     elif type == "prompts":
         items = (
             db.query(Prompt)
-            .filter(Prompt.tags == "[]")
+            .filter(
+                and_(
+                    or_(
+                        Prompt.tags == "[]",
+                        Prompt.embedding == "[]",
+                    ),
+                    # Max retry per item is 3
+                    Prompt.ner_count <= 3,
+                )
+            )
             .order_by(Prompt.created_at.asc())
             .limit(10)
             .all()
@@ -227,10 +239,9 @@ def get_items_for_ner(type: str, db: Session = Depends(get_db)):
     return uuids
 
 
-# API Endpoints for Prompt
-# Get a specific prompt by ID
+# API Endpoints for Prompt (query)
 @app.get("/prompt/{uuid}", response_model=PromptResponse)
-def read_prompt(uuid: str, db: Session = Depends(get_db)):
+def get_prompt(uuid: str, db: Session = Depends(get_db)):
     db_prompt = db.query(Prompt).filter(Prompt.uuid == uuid).first()
     if db_prompt is None:
         raise HTTPException(status_code=404, detail="Prompt not found")
@@ -238,13 +249,12 @@ def read_prompt(uuid: str, db: Session = Depends(get_db)):
 
 
 @app.post("/prompt/", response_model=PromptResponse)
-def create_new_prompt(prompt: PromptCreate, db: Session = Depends(get_db)):
+def create_prompt(prompt: PromptCreate, db: Session = Depends(get_db)):
     db_prompt = Prompt(
         uuid=secrets.token_hex(12),
         key=secrets.token_hex(4),
         text=prompt.text,
-        tags=prompt.tags,
-        embedding=prompt.embedding,
+        settings=prompt.settings
     )
     db.add(db_prompt)
     db.commit()
@@ -252,17 +262,32 @@ def create_new_prompt(prompt: PromptCreate, db: Session = Depends(get_db)):
     return db_prompt
 
 
-@app.put("/prompt/{uuid}", response_model=PromptResponse)
-def update_prompt_tags(uuid: str, tag_update: dict, db: Session = Depends(get_db)):
-    db_prompt = db.query(Prompt).filter(Prompt.uuid == uuid).first()
+@app.put("/prompt/{uuid}/{key}", response_model=PromptResponse)
+def update_prompt(uuid: str, key:str, data: dict, db: Session = Depends(get_db)):
+    db_prompt = db.query(Prompt).filter(and_(Prompt.uuid == uuid, Prompt.key == key)).first()
     if not db_prompt:
         raise HTTPException(status_code=404, detail="Prompt not found")
-    if "tags" in tag_update:
-        db_prompt.tags = tag_update["tags"]  # Update the tags column
-    if "embedding" in tag_update:
-        db_prompt.embedding = tag_update["embedding"]
-    if "tags_embedding" in tag_update:
-        db_prompt.tags_embedding = tag_update["tags_embedding"]
+    if "text" in data:
+        db_prompt.text = data["text"]
+        # Modifier prompt.text impose une réinitialisation des
+        # colonnes ci-dessous.
+        db_prompt.text_improved = ""
+        db_prompt.tags = []
+        db_prompt.embedding = []
+        db_prompt.feed = []
+        db_prompt.ner_count = 0
+    if "settings" in data:
+        # Modifier prompt.settings ne nécessite pas de réinitialisation,
+        # car la prochaine exécution de feedmaker mettra à jour le filtre.
+        db_prompt.settings = data["settings"]
+    if "tags" in data:
+        db_prompt.tags = data["tags"]
+    if "embedding" in data:
+        db_prompt.embedding = data["embedding"]
+    if "feed" in data:
+        db_prompt.feed = data["feed"]
+    if "ner_count" in data:
+        db_prompt.ner_count = data["ner_count"]
     db.commit()
     db.refresh(db_prompt)
     return db_prompt
@@ -278,7 +303,7 @@ def get_rss_item(uuid: str, db: Session = Depends(get_db)):
 
 
 @app.post("/rss-item/", response_model=RSSItemResponse)
-def create_new_rss_item(rss_item: RSSItemCreate, db: Session = Depends(get_db)):
+def create_rss_item(rss_item: RSSItemCreate, db: Session = Depends(get_db)):
     existing_rss_item = db.query(RSSItem).filter_by(link=rss_item.link).first()
     if existing_rss_item:
         raise HTTPException(
@@ -292,9 +317,6 @@ def create_new_rss_item(rss_item: RSSItemCreate, db: Session = Depends(get_db)):
         uuid=secrets.token_hex(12),
         source=rss_item.source,
         categorie=rss_item.categorie,
-        frontpage_id=rss_item.frontpage_id,
-        tags=rss_item.tags,
-        embedding=rss_item.embedding,
     )
     db.add(new_rss_item)
     db.commit()
@@ -303,21 +325,28 @@ def create_new_rss_item(rss_item: RSSItemCreate, db: Session = Depends(get_db)):
 
 
 @app.put("/rss-item/{uuid}", response_model=RSSItemResponse)
-def update_ner_tags(uuid: str, tag_update: dict, db: Session = Depends(get_db)):
+def update_rss_item(uuid: str, data: dict, db: Session = Depends(get_db)):
     rss_item = db.query(RSSItem).filter(RSSItem.uuid == uuid).first()
 
     if not rss_item:
         raise HTTPException(status_code=404, detail="RSSItem not found")
-    if "tags" in tag_update:
-        rss_item.tags = tag_update["tags"]
-    if "embedding" in tag_update:
-        rss_item.embedding = tag_update["embedding"]
-    if "tags_embedding" in tag_update:
-        rss_item.tags_embedding = tag_update["tags_embedding"]
+    if "tags" in data:
+        rss_item.tags = data["tags"]
+    if "embedding" in data:
+        rss_item.embedding = data["embedding"]
+    if "ogp" in data:
+        rss_item.ogp = [data["ogp"]]
+        logging.info(f"OQP: {data["ogp"]}")
+    if "similar" in data:
+        rss_item.similar = data["similar"]
+    if "ner_count" in data:
+        rss_item.ner_count = data["ner_count"]
+    if "image" in data:
+        rss_item.image = data["image"]
     db.commit()
     db.refresh(rss_item)
     return rss_item
 
 
 if __name__ == "__main__":
-    uvicorn.run("app:app", host="127.0.0.1", port=8000, log_level="info", reload=True)
+    uvicorn.run("app:app", host="0.0.0.0", port=8000, log_level="info", reload=True)
